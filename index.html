@@ -1,11 +1,741 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ai-guide</title>
-</head>
-<body>
-  <h1>ai-guide</h1>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#071421" />
+    <meta name="description" content="ai-guide：面向 AI 学习者与构建者的开放知识库与导航入口。" />
+    <meta property="og:title" content="ai-guide · AI 知识库" />
+    <meta property="og:description" content="精选 AI 概念、工具、实践与路线图，帮助你从入门走向实践。" />
+    <title>ai-guide · AI 知识库</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+SC:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+      :root {
+        --bg: #071420;
+        --bg-2: #0d1d2d;
+        --panel: rgba(17, 29, 43, 0.8);
+        --panel-strong: #0f2031;
+        --line: rgba(148, 176, 210, 0.18);
+        --text: #eef7ff;
+        --muted: #9bb1c7;
+        --cyan: #76f6d8;
+        --blue: #7aa4ff;
+        --purple: #c4a1ff;
+        --orange: #ffc876;
+        --shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+        --radius: 24px;
+      }
+
+      * { box-sizing: border-box; }
+      html { scroll-behavior: smooth; }
+      body {
+        margin: 0;
+        font-family: "Inter", "Noto Sans SC", sans-serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(122,164,255,0.18), transparent 28%),
+          radial-gradient(circle at 80% 10%, rgba(118,246,216,0.13), transparent 20%),
+          linear-gradient(180deg, #071420 0%, #0a1523 32%, #0d1d2d 100%);
+        line-height: 1.6;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(255,255,255,.02) 1px, transparent 1px);
+        background-size: 32px 32px;
+        mask-image: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent 95%);
+        pointer-events: none;
+      }
+
+      a { color: inherit; text-decoration: none; }
+      img { max-width: 100%; display: block; }
+      .wrap { width: min(1180px, calc(100% - 36px)); margin: 0 auto; }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        backdrop-filter: blur(16px);
+        background: rgba(7, 20, 32, 0.56);
+        border-bottom: 1px solid var(--line);
+      }
+
+      .nav {
+        height: 78px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+      }
+
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-weight: 800;
+        letter-spacing: -0.05em;
+      }
+
+      .brand-mark {
+        width: 36px;
+        height: 36px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, var(--cyan), var(--blue));
+        color: #021018;
+        font-weight: 900;
+        box-shadow: 0 0 30px rgba(118, 246, 216, 0.35);
+      }
+
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .nav-links a:hover {
+        color: var(--text);
+      }
+
+      .nav-cta, .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px 18px;
+        border-radius: 12px;
+        border: 1px solid rgba(118,246,216,0.25);
+        background: rgba(118,246,216,0.08);
+        color: var(--cyan);
+        font-weight: 700;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .button {
+        background: linear-gradient(135deg, var(--cyan), var(--blue));
+        color: #041621;
+        border: none;
+        box-shadow: 0 10px 30px rgba(118,246,216,0.25);
+      }
+
+      .nav-cta:hover, .button:hover { transform: translateY(-1px); }
+
+      .hero {
+        position: relative;
+        padding: 110px 0 90px;
+      }
+
+      .glow {
+        position: absolute;
+        right: 5%;
+        top: 20px;
+        width: 540px;
+        height: 540px;
+        background: radial-gradient(circle, rgba(122,164,255,0.20), transparent 60%);
+        pointer-events: none;
+      }
+
+      .eyebrow {
+        font-size: 0.74rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--cyan);
+        margin-bottom: 24px;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 40px;
+        align-items: center;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(3rem, 6vw, 6rem);
+        line-height: 0.95;
+        letter-spacing: -0.08em;
+      }
+
+      .gradient-text {
+        background: linear-gradient(120deg, #ffffff 8%, #b7d3ff 28%, var(--cyan) 70%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .hero-copy p {
+        margin: 26px 0 38px;
+        max-width: 620px;
+        color: var(--muted);
+        font-size: 1.1rem;
+      }
+
+      .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 14px;
+      }
+
+      .secondary {
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        color: var(--text);
+      }
+
+      .mini-panel {
+        position: relative;
+        padding: 26px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(17,29,43,0.88), rgba(13,24,36,0.9));
+        box-shadow: var(--shadow);
+      }
+
+      .mini-panel::before {
+        content: "";
+        position: absolute;
+        inset: 14px;
+        border-radius: 18px;
+        border: 1px solid rgba(118,246,216,0.08);
+        pointer-events: none;
+      }
+
+      .panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 24px;
+      }
+
+      .dot-group {
+        display: flex;
+        gap: 8px;
+      }
+
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.2);
+      }
+      .dot:nth-child(1) { background: #ff6d70; }
+      .dot:nth-child(2) { background: #ffbc5f; }
+      .dot:nth-child(3) { background: #6dffb6; }
+
+      .chip {
+        padding: 8px 12px;
+        border-radius: 999px;
+        border: 1px solid rgba(118,246,216,0.2);
+        background: rgba(118,246,216,0.08);
+        color: var(--cyan);
+        font-size: 0.75rem;
+      }
+
+      .chart-box {
+        display: grid;
+        gap: 16px;
+      }
+
+      .bars {
+        display: flex;
+        align-items: end;
+        gap: 12px;
+        height: 130px;
+      }
+
+      .bar {
+        flex: 1;
+        border-radius: 12px 12px 0 0;
+        background: linear-gradient(180deg, var(--cyan), var(--blue));
+        box-shadow: 0 16px 22px rgba(118,246,216,0.12);
+      }
+      .bar:nth-child(1) { height: 35%; }
+      .bar:nth-child(2) { height: 54%; }
+      .bar:nth-child(3) { height: 72%; }
+      .bar:nth-child(4) { height: 95%; }
+      .bar:nth-child(5) { height: 80%; }
+
+      .metrics {
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        padding-top: 16px;
+        border-top: 1px solid var(--line);
+      }
+
+      .metric {
+        flex: 1;
+      }
+      .metric strong {
+        display: block;
+        font-size: 1.5rem;
+        letter-spacing: -0.05em;
+      }
+      .metric span {
+        color: var(--muted);
+        font-size: 0.78rem;
+      }
+
+      .stats-row {
+        margin: 30px 0 90px;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0,1fr));
+        gap: 18px;
+      }
+
+      .stat {
+        padding: 22px 20px;
+        background: rgba(255,255,255,0.02);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 1.95rem;
+        letter-spacing: -0.06em;
+      }
+      .stat span {
+        color: var(--muted);
+        font-size: 0.8rem;
+      }
+
+      .section {
+        padding: 24px 0 110px;
+      }
+
+      .section-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 20px;
+        margin-bottom: 28px;
+      }
+
+      .section-head h2 {
+        margin: 10px 0 0;
+        font-size: clamp(2.2rem, 4vw, 3.1rem);
+        letter-spacing: -0.06em;
+      }
+
+      .section-head p {
+        margin: 0;
+        max-width: 430px;
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0,1fr));
+        gap: 18px;
+      }
+
+      .feature {
+        padding: 25px;
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        background: linear-gradient(180deg, rgba(15,32,49,0.82), rgba(10,20,31,0.84));
+        transition: transform 0.2s ease, border-color 0.2s ease;
+      }
+
+      .feature:hover {
+        transform: translateY(-2px);
+        border-color: rgba(118,246,216,0.35);
+      }
+
+      .feature-icon {
+        width: 54px;
+        height: 54px;
+        display: grid;
+        place-items: center;
+        border-radius: 16px;
+        background: rgba(118,246,216,0.1);
+        color: var(--cyan);
+        font-size: 1.5rem;
+        margin-bottom: 18px;
+      }
+
+      .feature h3 {
+        margin: 0 0 10px;
+        font-size: 1.35rem;
+      }
+
+      .feature p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .feature-tag {
+        display: inline-block;
+        margin-top: 18px;
+        color: var(--cyan);
+        font-size: 0.75rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .roadmap {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .phase {
+        position: relative;
+        padding: 20px 18px 18px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,255,255,0.02);
+      }
+
+      .phase::before {
+        content: "";
+        position: absolute;
+        top: -1px;
+        left: 20px;
+        right: 20px;
+        height: 3px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--cyan), var(--blue));
+      }
+
+      .phase strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1rem;
+      }
+      .phase span {
+        color: var(--muted);
+        font-size: 0.88rem;
+      }
+
+      .updates {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0,1fr));
+        gap: 18px;
+      }
+
+      .update {
+        display: flex;
+        justify-content: space-between;
+        gap: 18px;
+        padding: 22px 22px 18px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,255,255,0.02);
+      }
+
+      .update h3 {
+        margin: 0 0 8px;
+        font-size: 1.1rem;
+      }
+      .update p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .update-time {
+        color: var(--cyan);
+        font-size: 0.74rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        white-space: nowrap;
+      }
+
+      .cta {
+        padding: 26px 30px;
+        border: 1px solid rgba(118,246,216,0.24);
+        border-radius: 28px;
+        background: linear-gradient(90deg, rgba(118,246,216,0.08), rgba(122,164,255,0.06));
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+      }
+
+      .cta h3 {
+        margin: 0 0 8px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        letter-spacing: -0.06em;
+      }
+      .cta p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      footer {
+        padding: 30px 0 60px;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .footer-inner {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 18px;
+        border-top: 1px solid var(--line);
+        padding-top: 22px;
+      }
+
+      @media (max-width: 900px) {
+        .hero-grid,
+        .features,
+        .updates,
+        .roadmap,
+        .stats-row {
+          grid-template-columns: 1fr 1fr;
+        }
+        .hero-grid { grid-template-columns: 1fr; }
+        .nav-links { display: none; }
+      }
+
+      @media (max-width: 640px) {
+        .features,
+        .updates,
+        .roadmap,
+        .stats-row {
+          grid-template-columns: 1fr;
+        }
+        .section-head,
+        .cta,
+        .footer-inner {
+          display: block;
+        }
+        .section-head p { margin-top: 12px; }
+        .cta { padding: 22px; }
+        .cta .button { margin-top: 18px; }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="wrap nav">
+        <a href="#top" class="brand" aria-label="ai-guide home">
+          <span class="brand-mark">✦</span>
+          <span>ai-guide</span>
+        </a>
+        <nav class="nav-links" aria-label="Main navigation">
+          <a href="#features">精选内容</a>
+          <a href="#roadmap">路线图</a>
+          <a href="#updates">更新日志</a>
+          <a href="#community">社区</a>
+        </nav>
+        <a class="nav-cta" href="https://github.com/FengShenNo1/ai-guide" target="_blank" rel="noreferrer">GitHub ↗</a>
+      </div>
+    </header>
+
+    <main id="top">
+      <section class="wrap hero">
+        <div class="glow" aria-hidden="true"></div>
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="eyebrow">Open knowledge for AI learners</div>
+            <h1>
+              把 AI 的复杂，<span class="gradient-text">变成可探索的路径。</span>
+            </h1>
+            <p>
+              ai-guide 是一个开放、系统、可持续增长的 AI 知识库。我们聚焦概念、工具、实践与路线图，
+              帮助每一位学习者从“听说”走向“能用”，从“入门”走向“创造”。
+            </p>
+            <div class="hero-actions">
+              <a class="button" href="#features">开始探索</a>
+              <a class="button secondary" href="https://github.com/FengShenNo1/ai-guide" target="_blank" rel="noreferrer">查看仓库</a>
+            </div>
+          </div>
+
+          <aside class="mini-panel" aria-label="project status">
+            <div class="panel-header">
+              <div class="dot-group" aria-hidden="true">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+              </div>
+              <span class="chip">AI roadmap</span>
+            </div>
+            <div class="chart-box">
+              <div class="bars" aria-hidden="true">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+              </div>
+              <div class="metrics">
+                <div class="metric">
+                  <strong>12k+</strong>
+                  <span>学习路径</span>
+                </div>
+                <div class="metric">
+                  <strong>86%</strong>
+                  <span>增长</span>
+                </div>
+                <div class="metric">
+                  <strong>24/7</strong>
+                  <span>持续更新</span>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="wrap stats-row" aria-label="project statistics">
+        <div class="stat">
+          <strong id="star-count">—</strong>
+          <span>GitHub Stars</span>
+        </div>
+        <div class="stat">
+          <strong id="fork-count">—</strong>
+          <span>Forks</span>
+        </div>
+        <div class="stat">
+          <strong>∞</strong>
+          <span>知识路径</span>
+        </div>
+        <div class="stat">
+          <strong>100%</strong>
+          <span>开放协作</span>
+        </div>
+      </section>
+
+      <section class="wrap section" id="features">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">01 / curated</div>
+            <h2>精选内容</h2>
+          </div>
+          <p>不是信息堆砌，而是把 AI 学习拆成清晰路线：理解、选择、实践、创造。</p>
+        </div>
+
+        <div class="features">
+          <article class="feature">
+            <div class="feature-icon">✦</div>
+            <h3>AI 基础地图</h3>
+            <p>从机器学习、深度学习、生成式 AI 到 Agent 框架，建立准确的知识坐标系。</p>
+            <span class="feature-tag">Foundations</span>
+          </article>
+
+          <article class="feature">
+            <div class="feature-icon">◎</div>
+            <h3>工具与工作流</h3>
+            <p>系统整理模型能力、开发工具、提示工程和自动化实践，减少尝试成本。</p>
+            <span class="feature-tag">Workflow</span>
+          </article>
+
+          <article class="feature">
+            <div class="feature-icon">⬢</div>
+            <h3>实战与案例</h3>
+            <p>将知识转化为产品、脚本、工作流和实际创作，让 AI 真正成为你的协作伙伴。</p>
+            <span class="feature-tag">Build in public</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="wrap section" id="roadmap">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">02 / direction</div>
+            <h2>路线图</h2>
+          </div>
+          <p>持续演进，逐步拓展从入门到深度实践的完整学习闭环。</p>
+        </div>
+
+        <div class="roadmap">
+          <div class="phase">
+            <strong>01 · 探索</strong>
+            <span>建立 AI 基础理解，聚焦核心概念与认知框架。</span>
+          </div>
+          <div class="phase">
+            <strong>02 · 连接</strong>
+            <span>串联模型、工具、工作流与真实使用场景。</span>
+          </div>
+          <div class="phase">
+            <strong>03 · 创造</strong>
+            <span>从实践中发现机会，构建自己的 AI 创作与自动化方案。</span>
+          </div>
+          <div class="phase">
+            <strong>04 · 分享</strong>
+            <span>将经验和知识沉淀成社区资产，形成开放知识循环。</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="wrap section" id="updates">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">03 / changelog</div>
+            <h2>更新日志</h2>
+          </div>
+          <p>每个版本都在更清晰地帮助更多人理解 AI，并快速落地到项目中。</p>
+        </div>
+
+        <div class="updates">
+          <article class="update">
+            <div>
+              <h3>知识库正式启航</h3>
+              <p>搭建开放目录、学习框架与协作入口，面向 AI 学习者使用。</p>
+            </div>
+            <span class="update-time">Sep 2026</span>
+          </article>
+
+          <article class="update">
+            <div>
+              <h3>导航官网上线</h3>
+              <p>以更高质量的视觉和信息层次，提升项目展示与传播效果。</p>
+            </div>
+            <span class="update-time">Now</span>
+          </article>
+        </div>
+      </section>
+
+      <section class="wrap section" id="community">
+        <div class="cta">
+          <div>
+            <div class="eyebrow">Join the journey</div>
+            <h3>一起让 AI 更容易被理解。</h3>
+            <p>给这个项目一个 Star，提交内容，或者分享你自己的 AI 学习路线。</p>
+          </div>
+          <a class="button" href="https://github.com/FengShenNo1/ai-guide" target="_blank" rel="noreferrer">参与共建</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="wrap">
+      <div class="footer-inner">
+        <span>© 2026 ai-guide · Open knowledge for everyone.</span>
+        <span>Made with curiosity ✦</span>
+      </div>
+    </footer>
+
+    <script>
+      async function updateGitHubStats() {
+        try {
+          const response = await fetch('https://api.github.com/repos/FengShenNo1/ai-guide');
+          const data = await response.json();
+          if (data && typeof data.stargazers_count === 'number') {
+            document.getElementById('star-count').textContent = data.stargazers_count.toLocaleString();
+          }
+          if (data && typeof data.forks_count === 'number') {
+            document.getElementById('fork-count').textContent = data.forks_count.toLocaleString();
+          }
+        } catch (error) {
+          document.getElementById('star-count').textContent = '0';
+          document.getElementById('fork-count').textContent = '0';
+        }
+      }
+      updateGitHubStats();
+    </script>
+  </body>
 </html>
